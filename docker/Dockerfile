@@ -20,7 +20,7 @@ RUN yarn generate
 ###############################################
 # Base Image - Python
 ###############################################
-FROM python:3.12-slim as python-base
+FROM python:3.12-slim AS python-base
 
 ENV MEALIE_HOME="/app"
 
@@ -119,7 +119,7 @@ RUN . $VENV_PATH/bin/activate \
 ###############################################
 # Production Image
 ###############################################
-FROM python-base as production
+FROM python-base AS production
 LABEL org.opencontainers.image.source="https://github.com/mealie-recipes/mealie"
 ENV PRODUCTION=true
 ENV TESTING=false
@@ -129,6 +129,7 @@ ENV GIT_COMMIT_HASH=$COMMIT
 
 RUN apt-get update \
     && apt-get install --no-install-recommends -y \
+    curl \
     gosu \
     iproute2 \
     libldap-common \
@@ -151,9 +152,10 @@ ENV APP_PORT=9000
 
 EXPOSE ${APP_PORT}
 
-HEALTHCHECK CMD python -m mealie.scripts.healthcheck || exit 1
+HEALTHCHECK --interval=1m --timeout=10s CMD \
+    curl -f http://localhost:${APP_PORT}/api/app/about || exit 1
 
-ENV HOST 0.0.0.0
+ENV HOST=0.0.0.0
 
 EXPOSE ${APP_PORT}
 COPY ./docker/entry.sh $MEALIE_HOME/run.sh
