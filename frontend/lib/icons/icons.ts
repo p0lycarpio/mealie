@@ -154,6 +154,7 @@ import {
   mdiLinkVariantPlus,
   mdiTableEdit,
   mdiFileSign,
+  mdiHandWaveOutline,
 } from "@mdi/js";
 
 export const icons = {
@@ -287,6 +288,7 @@ export const icons = {
   knfife: mdiKnife,
   bread: mdiCookie,
   fileSign: mdiFileSign,
+  wave: mdiHandWaveOutline,
 
   // Crud
   backArrow: mdiArrowLeftBoldOutline,
