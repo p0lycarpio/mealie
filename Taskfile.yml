@@ -7,6 +7,10 @@ env:
   DEFAULT_GROUP: Home
   DEFAULT_HOUSEHOLD: Family
   PRODUCTION: false
+  # Install from the committed lockfile; never re-resolve. Required because the
+  # rolling `exclude-newer` cooling window (pyproject [tool.uv]) would otherwise
+  # make every `uv run`/`uv sync` re-resolve and fail on in-window pins.
+  UV_FROZEN: "1"
   API_PORT: 9000
   API_DOCS: True
   TOKEN_TIME: 256 # hours
@@ -25,16 +29,9 @@ dotenv:
   - .env
   - .dev.env
 tasks:
-  docs:gen:
-    desc: runs the API documentation generator
-    cmds:
-      - uv run python dev/code-generation/gen_docs_api.py
-
   docs:
     desc: runs the documentation server
     dir: docs
-    deps:
-      - docs:gen
     cmds:
       - uv run python -m mkdocs serve
 
@@ -81,7 +78,6 @@ tasks:
     desc: run code generators
     cmds:
       - uv run python dev/code-generation/main.py {{ .CLI_ARGS }}
-      - task: docs:gen
       - task: py:format
 
   dev:services:

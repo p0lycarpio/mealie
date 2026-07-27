@@ -88,8 +88,6 @@ async def lifespan_fn(_: FastAPI) -> AsyncGenerator[None, None]:
     logger.info(settings.LDAP_FEATURE)
     logger.info("--------==OIDC==--------")
     logger.info(settings.OIDC_FEATURE)
-    logger.info("-------==OPENAI==-------")
-    logger.info(settings.OPENAI_FEATURE)
     logger.info("------------------------")
 
     yield
@@ -102,7 +100,6 @@ app = FastAPI(
     description=description,
     version=APP_VERSION,
     docs_url=settings.DOCS_URL,
-    redoc_url=settings.REDOC_URL,
     lifespan=lifespan_fn,
 )
 
@@ -178,6 +175,7 @@ def main():
         log_config=None,
         workers=1,
         forwarded_allow_ips="*",
+        ws="websockets-sansio",
     )
 
 

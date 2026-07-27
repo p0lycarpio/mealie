@@ -78,16 +78,16 @@ class CrowdinApi:
             headers=self.headers,
         )
         data = response.json()["data"]
-        return {p["data"]["languageId"]: p["translationProgress"] for p in data}
+        return {p["data"]["languageId"]: p["data"]["translationProgress"] for p in data}
 
 
 PROJECT_DIR = Path(__file__).parent.parent.parent
 
 
-datetime_dir = PROJECT_DIR / "frontend" / "lang" / "dateTimeFormats"
-locales_dir = PROJECT_DIR / "frontend" / "lang" / "messages"
+datetime_dir = PROJECT_DIR / "frontend" / "app" / "lang" / "dateTimeFormats"
+locales_dir = PROJECT_DIR / "frontend" / "app" / "lang" / "messages"
 nuxt_config = PROJECT_DIR / "frontend" / "nuxt.config.ts"
-i18n_config = PROJECT_DIR / "frontend" / "i18n.config.ts"
+i18n_config = PROJECT_DIR / "frontend" / "app" / "i18n.config.ts"
 reg_valid = PROJECT_DIR / "mealie" / "schema" / "_mealie" / "validators.py"
 
 """

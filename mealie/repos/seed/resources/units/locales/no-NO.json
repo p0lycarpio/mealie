@@ -73,7 +73,7 @@
         "abbreviation": "g"
     },
     "kilogram": {
-        "name": "kilogram",
+        "name": "kilo",
         "plural_name": "kilogram",
         "description": "",
         "abbreviation": "kg"
@@ -139,8 +139,8 @@
         "abbreviation": ""
     },
     "sprig": {
-        "name": "sprig",
-        "plural_name": "sprigs",
+        "name": "kvist",
+        "plural_name": "kvistmengde",
         "description": "",
         "abbreviation": ""
     }

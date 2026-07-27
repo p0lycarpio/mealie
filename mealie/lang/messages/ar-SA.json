@@ -17,6 +17,18 @@
             "servings": "حصص الطعام",
             "yield": "العائد",
             "yields": "العائد"
+        },
+        "and-amount": "و {amount}",
+        "or-ingredient": "أو {ingredient}",
+        "create-progress": {
+            "creating-recipe-with-ai": "إنشاء وصفة باستخدام AI...",
+            "creating-recipe-from-transcript-with-ai": "إنشاء وصفة من النص باستخدام AI...",
+            "creating-recipe-from-webpage-data": "إنشاء وصفة من بيانات صفحة الويب...",
+            "downloading-image": "جارى تحميل الصورة...",
+            "downloading-video": "جاري تحميل الفيديو...",
+            "extracting-recipe-data": "استخراج بيانات الوصفة...",
+            "fetching-webpage": "جلب صفحة الويب...",
+            "transcribing-audio-with-ai": "جاري نقل الصوت باستخدام AI..."
         }
     },
     "mealplan": {
