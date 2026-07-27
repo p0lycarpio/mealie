@@ -998,13 +998,6 @@
   dependencies:
     "@marijn/find-cluster-break" "^1.0.0"
 
-"@codemirror/state@^6.5.4":
-  version "6.5.4"
-  resolved "https://registry.yarnpkg.com/@codemirror/state/-/state-6.5.4.tgz#f5be4b8c0d2310180d5f15a9f641c21ca69faf19"
-  integrity sha512-8y7xqG/hpB53l25CIoit9/ngxdfoG+fx+V3SHBrinnhOtLvKHRyAJJuHzkWrR4YXXLX8eXBsejgAAxHUOdW1yw==
-  dependencies:
-    "@marijn/find-cluster-break" "^1.0.0"
-
 "@codemirror/view@^6.0.0", "@codemirror/view@^6.17.0", "@codemirror/view@^6.23.0", "@codemirror/view@^6.27.0", "@codemirror/view@^6.35.0":
   version "6.38.3"
   resolved "https://registry.yarnpkg.com/@codemirror/view/-/view-6.38.3.tgz#6b31d5d5c67a51615dd345184159630b763804b1"

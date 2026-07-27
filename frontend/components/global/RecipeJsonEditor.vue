@@ -8,7 +8,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, watch } from "vue";
-import { EditorView, lineNumbers } from "@codemirror/view";
+import { EditorView } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { search } from "@codemirror/search";
 import { json } from "@codemirror/lang-json";
@@ -112,7 +112,6 @@ const darkTheme = [
 
 const baseExtensions = [
   basicSetup,
-  lineNumbers(),
   EditorView.lineWrapping,
   search({ top: true }),
   json(),

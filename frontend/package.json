@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "@codemirror/lang-json": "^6.0.2",
-    "@codemirror/state": "^6.5.4",
     "@mdi/js": "^7.4.47",
     "@nuxt/fonts": "^0.11.4",
     "@nuxtjs/i18n": "^9.2.1",
