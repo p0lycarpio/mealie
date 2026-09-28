@@ -32,12 +32,11 @@
           @delete="deleteRecipe"
           @close="closeEditor"
         />
-        <RecipeJsonEditor
+        <LazyBaseJsonCodeEditor
           v-if="isEditJSON"
           v-model="recipe"
           class="mt-10"
-          mode="text"
-          :main-menu-bar="false"
+          height="1500px"
         />
         <v-card-text v-else>
           <!--

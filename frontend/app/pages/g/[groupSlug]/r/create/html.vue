@@ -44,12 +44,10 @@
           class="mt-10 mb-4"
           style="max-width: 500px"
         />
-        <RecipeJsonEditor
+        <LazyBaseJsonCodeEditor
           v-if="state.isEditJSON"
           v-model="newRecipeData"
           height="250px"
-          mode="code"
-          :main-menu-bar="false"
         />
         <v-textarea
           v-else

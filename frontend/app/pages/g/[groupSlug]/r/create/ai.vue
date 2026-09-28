@@ -47,12 +47,10 @@
           :disabled="state.loading"
           @change="handleIsEditJson"
         />
-        <RecipeJsonEditor
+        <LazyBaseJsonCodeEditor
           v-if="state.isEditJSON"
           v-model="newRecipeData"
           height="250px"
-          mode="code"
-          :main-menu-bar="false"
         />
         <v-textarea
           v-else
