@@ -32,12 +32,7 @@
           @delete="deleteRecipe"
           @close="closeEditor"
         />
-        <LazyBaseJsonCodeEditor
-          v-if="isEditJSON"
-          v-model="recipe"
-          class="mt-10"
-          height="1500px"
-        />
+        <LazyRecipeJsonEditor v-if="isEditJSON" v-model="recipe" class="mt-10" hydrate-on-visible />
         <v-card-text v-else>
           <!--
             This is where most of the main content is rendered. Some components include state for both Edit and View modes
@@ -83,7 +78,12 @@
                 :ingredient-storage-key="ingredientStorageKey"
                 class="pr-2"
               />
-              <RecipePageOrganizers v-if="$vuetify.display.mdAndUp" v-model="recipe" class="pr-2" @item-selected="chipClicked" />
+              <RecipePageOrganizers
+                v-if="$vuetify.display.mdAndUp"
+                v-model="recipe"
+                class="pr-2"
+                @item-selected="chipClicked"
+              />
             </v-col>
             <!--
               the right column is always rendered, but it's layout width is determined by where the left column is
@@ -161,13 +161,13 @@
         </v-col>
         <v-col
           class="overflow-y-auto"
-          :class="$vuetify.display.smAndDown ? 'py-2': 'py-6'"
+          :class="$vuetify.display.smAndDown ? 'py-2' : 'py-6'"
           style="height: 100%"
           cols="12"
           sm="7"
         >
           <h2 class="text-h5 px-4 font-weight-medium opacity-80">
-            {{ $t('recipe.instructions') }}
+            {{ $t("recipe.instructions") }}
           </h2>
           <RecipePageInstructions
             v-model="recipe.recipeInstructions"
@@ -235,11 +235,7 @@ import RecipePageScale from "./RecipePageParts/RecipePageScale.vue";
 import RecipePageInfoEditor from "./RecipePageParts/RecipePageInfoEditor.vue";
 import RecipePageComments from "./RecipePageParts/RecipePageComments.vue";
 import RecipePrintContainer from "~/components/Domain/Recipe/RecipePrintContainer.vue";
-import {
-  clearPageState,
-  PageMode,
-  usePageState,
-} from "~/composables/recipe-page/shared-state";
+import { clearPageState, PageMode, usePageState } from "~/composables/recipe-page/shared-state";
 import { useCookModeQuery, type BooleanString } from "~/composables/recipe-page/use-cook-mode-query";
 import type { NoUndefinedField } from "~/lib/api/types/non-generated";
 import type { Recipe, RecipeCategory, RecipeIngredient, RecipeTag, RecipeTool } from "~/lib/api/types/recipe";
@@ -262,10 +258,8 @@ const { isOwnGroup } = useLoggedInState();
 
 const { household } = useHouseholdSelf();
 
-const disableComments = computed(() =>
-  household.value?.preferences?.recipeDisableComments
-  || recipe.value?.settings?.disableComments
-  || false,
+const disableComments = computed(
+  () => household.value?.preferences?.recipeDisableComments || recipe.value?.settings?.disableComments || false
 );
 
 const groupSlug = computed(() => (route.params.groupSlug as string) || auth.user?.value?.groupSlug || "");
@@ -273,8 +267,17 @@ const ingredientStorageKey = computed(() => `recipe-ingredients:${recipe.value.i
 
 const router = useRouter();
 const api = useUserApi();
-const { pageMode, setMode, isEditForm, isEditJSON, isCookMode, isEditMode, isParsing, toggleCookMode, toggleIsParsing }
-  = usePageState(recipe.value.slug);
+const {
+  pageMode,
+  setMode,
+  isEditForm,
+  isEditJSON,
+  isCookMode,
+  isEditMode,
+  isParsing,
+  toggleCookMode,
+  toggleIsParsing,
+} = usePageState(recipe.value.slug);
 const { deactivateNavigationWarning } = useNavigationWarning();
 const scale = ref(1);
 
@@ -297,16 +300,16 @@ const displayedRecipe = computed<NoUndefinedField<Recipe>>(() => {
 
   return {
     ...recipe.value,
-    recipeIngredient: recipe.value.recipeIngredient.map(
-      ingredient => convertIngredient(ingredient, unitSystem.value!, scale.value),
+    recipeIngredient: recipe.value.recipeIngredient.map((ingredient) =>
+      convertIngredient(ingredient, unitSystem.value!, scale.value)
     ),
   };
 });
 
 const notLinkedIngredients = computed(() => {
   return displayedRecipe.value.recipeIngredient.filter((ingredient) => {
-    return !recipe.value.recipeInstructions.some(step =>
-      step.ingredientReferences?.map(ref => ref.referenceId).includes(ingredient.referenceId),
+    return !recipe.value.recipeInstructions.some((step) =>
+      step.ingredientReferences?.map((ref) => ref.referenceId).includes(ingredient.referenceId)
     );
   });
 });
@@ -323,8 +326,10 @@ onMounted(async () => {
   const el = recipeToolbar.value?.$el as HTMLElement | undefined;
   if (!el) return;
   toolbarObserver = new IntersectionObserver(
-    ([entry]) => { toolbarVisible.value = entry.isIntersecting; },
-    { threshold: 0 },
+    ([entry]) => {
+      toolbarVisible.value = entry.isIntersecting;
+    },
+    { threshold: 0 }
   );
   toolbarObserver.observe(el);
 });
@@ -362,8 +367,7 @@ function closeEditor() {
   if (hasUnsavedChanges()) {
     pendingRoute.value = null;
     discardDialog.value = true;
-  }
-  else {
+  } else {
     setMode(PageMode.VIEW);
   }
 }
@@ -376,8 +380,7 @@ function confirmDiscard() {
     const destination = pendingRoute.value;
     pendingRoute.value = null;
     router.push(destination);
-  }
-  else {
+  } else {
     setMode(PageMode.VIEW);
   }
 }
@@ -401,7 +404,7 @@ onUnmounted(() => {
 });
 const hasLinkedIngredients = computed(() => {
   return recipe.value.recipeInstructions.some(
-    step => step.ingredientReferences && step.ingredientReferences.length > 0,
+    (step) => step.ingredientReferences && step.ingredientReferences.length > 0
   );
 });
 /** =============================================================
@@ -497,8 +500,7 @@ const landscape = computed(() => {
 
   if (preferLandscape) {
     return true;
-  }
-  else if (smallScreen) {
+  } else if (smallScreen) {
     return true;
   }
 
@@ -521,8 +523,7 @@ function addStep(steps: Array<string> | null = null) {
     });
 
     recipe.value.recipeInstructions.push(...cleanedSteps);
-  }
-  else {
+  } else {
     recipe.value.recipeInstructions.push({
       id: uuid4(),
       text: "",

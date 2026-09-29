@@ -2,26 +2,32 @@
   <v-form ref="domUrlForm" @submit.prevent="createRecipe">
     <div>
       <v-card-title class="headline">
-        {{ $t('recipe.import-with-ai') }}
+        {{ $t("recipe.import-with-ai") }}
       </v-card-title>
       <v-card-text v-if="!aiEnabled">
         <v-alert type="info" variant="tonal">
-          {{ $t('recipe.import-with-ai-provider-required') }}
+          {{ $t("recipe.import-with-ai-provider-required") }}
         </v-alert>
       </v-card-text>
       <v-card-text v-else>
-        <p>{{ $t('recipe.import-with-ai-description') }}</p>
+        <p>{{ $t("recipe.import-with-ai-description") }}</p>
         <p v-if="videosEnabled">
-          {{ $t('recipe.import-with-ai-video-description') }}
+          {{ $t("recipe.import-with-ai-video-description") }}
         </p>
-        <br>
+        <br />
         <p>
-          {{ $t('recipe.import-with-ai-without-ai-question') }}
-          <router-link :to="urlImporterTarget" class="text-primary">{{ $t('recipe.import-with-ai-use-url-import') }}</router-link>.
+          {{ $t("recipe.import-with-ai-without-ai-question") }}
+          <router-link :to="urlImporterTarget" class="text-primary">{{
+            $t("recipe.import-with-ai-use-url-import")
+          }}</router-link
+          >.
         </p>
         <p>
-          {{ $t('recipe.scrape-recipe-have-raw-html-or-json-data') }}
-          <router-link :to="htmlOrJsonImporterTarget" class="text-primary">{{ $t('recipe.scrape-recipe-you-can-import-from-raw-data-directly') }}</router-link>.
+          {{ $t("recipe.scrape-recipe-have-raw-html-or-json-data") }}
+          <router-link :to="htmlOrJsonImporterTarget" class="text-primary">{{
+            $t("recipe.scrape-recipe-you-can-import-from-raw-data-directly")
+          }}</router-link
+          >.
         </p>
 
         <v-text-field
@@ -47,11 +53,7 @@
           :disabled="state.loading"
           @change="handleIsEditJson"
         />
-        <LazyBaseJsonCodeEditor
-          v-if="state.isEditJSON"
-          v-model="newRecipeData"
-          height="250px"
-        />
+        <LazyRecipeJsonEditor v-if="state.isEditJSON" v-model="newRecipeData" height="250px" hydrate-on-visible />
         <v-textarea
           v-else
           v-model="newRecipeData"
@@ -69,13 +71,8 @@
         <div v-if="imagesEnabled" class="mt-6">
           <RecipeImportImages v-model="uploadedImages" :disabled="state.loading" />
         </div>
-        <v-alert
-          v-else
-          type="info"
-          variant="tonal"
-          class="mt-6"
-        >
-          {{ $t('recipe.import-with-ai-image-provider-required') }}
+        <v-alert v-else type="info" variant="tonal" class="mt-6">
+          {{ $t("recipe.import-with-ai-image-provider-required") }}
         </v-alert>
 
         <v-checkbox
@@ -99,7 +96,7 @@
                 {{ $globals.icons.help }}
               </v-icon>
             </template>
-            <span>{{ $t('recipe.create-new-organizers-hint') }}</span>
+            <span>{{ $t("recipe.create-new-organizers-hint") }}</span>
           </v-tooltip>
         </div>
         <v-checkbox
@@ -120,13 +117,7 @@
       <v-card-actions v-if="aiEnabled" class="justify-center">
         <div style="width: 100%" class="text-center">
           <div style="width: 250px; margin: 0 auto">
-            <BaseButton
-              :disabled="!hasSource"
-              rounded
-              block
-              type="submit"
-              :loading="state.loading"
-            />
+            <BaseButton :disabled="!hasSource" rounded block type="submit" :loading="state.loading" />
           </div>
           <v-card-text class="py-2">
             <!-- render &nbsp; to maintain layout -->
@@ -136,17 +127,9 @@
       </v-card-actions>
 
       <v-expand-transition>
-        <v-alert
-          v-if="state.error"
-          color="error"
-          class="mt-6 white--text"
-        >
+        <v-alert v-if="state.error" color="error" class="mt-6 white--text">
           <v-card-title class="ma-0 pa-0">
-            <v-icon
-              start
-              color="white"
-              size="x-large"
-            >
+            <v-icon start color="white" size="x-large">
               {{ $globals.icons.robot }}
             </v-icon>
             {{ $t("new-recipe.error-title") }}
@@ -171,7 +154,7 @@ import { validators } from "~/composables/use-validators";
 import type { VForm } from "~/types/auto-forms";
 
 definePageMeta({
-  key: route => route.path,
+  key: (route) => route.path,
 });
 
 const state = reactive({
@@ -188,7 +171,7 @@ const route = useRoute();
 const tags = useTagStore();
 const { group } = useGroupSelf();
 
-const groupSlug = computed(() => route.params.groupSlug as string || auth.user.value?.groupSlug || "");
+const groupSlug = computed(() => (route.params.groupSlug as string) || auth.user.value?.groupSlug || "");
 const urlImporterTarget = computed(() => `/g/${groupSlug.value}/r/create/url`);
 const htmlOrJsonImporterTarget = computed(() => `/g/${groupSlug.value}/r/create/html`);
 const aiEnabled = computed(() => !!group.value?.aiProviderSettings?.aiEnabled);
@@ -201,13 +184,7 @@ const newRecipeData = ref<string | object | null>(null);
 const uploadedImages = ref<(Blob | File)[]>([]);
 const createStatus = ref<string | null>(null);
 
-const {
-  stayInEditMode,
-  parseRecipe,
-  translateRecipe,
-  createNewOrganizers,
-  navigateToRecipe,
-} = useNewRecipeOptions({
+const { stayInEditMode, parseRecipe, translateRecipe, createNewOrganizers, navigateToRecipe } = useNewRecipeOptions({
   enableImportKeywords: false,
   enableImportCategories: false,
   enableTranslateRecipe: true,
@@ -230,19 +207,15 @@ function handleIsEditJson() {
     if (newRecipeData.value) {
       try {
         newRecipeData.value = JSON.parse(newRecipeData.value as string);
-      }
-      catch {
+      } catch {
         newRecipeData.value = { data: newRecipeData.value };
       }
-    }
-    else {
+    } else {
       newRecipeData.value = {};
     }
-  }
-  else if (newRecipeData.value && Object.keys(newRecipeData.value).length > 0) {
+  } else if (newRecipeData.value && Object.keys(newRecipeData.value).length > 0) {
     newRecipeData.value = JSON.stringify(newRecipeData.value);
-  }
-  else {
+  } else {
     newRecipeData.value = null;
   }
 }
@@ -270,7 +243,7 @@ async function createRecipe() {
       translateLanguage: translateRecipe.value ? i18n.locale.value : null,
       createNewOrganizers: createNewOrganizers.value,
     },
-    (message: string) => createStatus.value = message,
+    (message: string) => (createStatus.value = message)
   );
 
   createStatus.value = null;

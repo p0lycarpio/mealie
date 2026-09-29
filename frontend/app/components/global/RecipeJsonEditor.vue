@@ -1,9 +1,6 @@
 <template>
   <div>
-    <div
-      ref="editorElement"
-      :style="{ height }"
-    />
+    <div ref="editorElement" :style="{ height }" class="codemirror-wrapper" />
   </div>
 </template>
 
@@ -17,18 +14,19 @@ import { oneDark } from "@codemirror/theme-one-dark";
 import { EditorView, highlightActiveLine, highlightActiveLineGutter, keymap, lineNumbers } from "@codemirror/view";
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-defineOptions({ name: "BaseJsonCodeEditor" });
+defineOptions({ name: "RecipeJsonEditor" });
 
 const modelValue = defineModel<unknown>("modelValue", { default: () => ({}) });
-const props = withDefaults(defineProps<{
-  height?: string;
-  readOnly?: boolean;
-  ariaLabel?: string;
-}>(), {
-  height: "1500px",
-  readOnly: false,
-  ariaLabel: "JSON editor",
-});
+const props = withDefaults(
+  defineProps<{
+    height?: string;
+    readOnly?: boolean;
+  }>(),
+  {
+    height: "1500px",
+    readOnly: false,
+  }
+);
 
 const editorElement = ref<HTMLElement>();
 const readOnlyCompartment = new Compartment();
@@ -51,8 +49,7 @@ function parseObject(text: string): object | undefined {
     if (typeof value === "object" && value !== null) {
       return value;
     }
-  }
-  catch {
+  } catch {
     // Invalid text stays in the editor until the user corrects it.
   }
   return undefined;
@@ -92,20 +89,13 @@ onMounted(() => {
       doc: internalText,
       extensions: [
         lineNumbers(),
+        EditorView.lineWrapping,
         history(),
         keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
         json(),
         linter(jsonParseLinter()),
-        EditorView.theme({
-          "&": { height: "100%" },
-          ".cm-scroller": { overflow: "auto" },
-        }),
         themeCompartment.of(themeExtensions(isDark.value)),
-        readOnlyCompartment.of([
-          EditorState.readOnly.of(props.readOnly),
-          EditorView.editable.of(!props.readOnly),
-        ]),
-        EditorView.contentAttributes.of({ "aria-label": props.ariaLabel }),
+        readOnlyCompartment.of([EditorState.readOnly.of(props.readOnly), EditorView.editable.of(!props.readOnly)]),
         EditorView.updateListener.of((update) => {
           if (!update.docChanged) {
             return;
@@ -128,14 +118,14 @@ onMounted(() => {
   });
 });
 
-watch(() => props.readOnly, (readOnly) => {
-  editorView?.dispatch({
-    effects: readOnlyCompartment.reconfigure([
-      EditorState.readOnly.of(readOnly),
-      EditorView.editable.of(!readOnly),
-    ]),
-  });
-});
+watch(
+  () => props.readOnly,
+  (readOnly) => {
+    editorView?.dispatch({
+      effects: readOnlyCompartment.reconfigure([EditorState.readOnly.of(readOnly), EditorView.editable.of(!readOnly)]),
+    });
+  }
+);
 
 watch(isDark, (dark) => {
   editorView?.dispatch({
@@ -161,3 +151,16 @@ onBeforeUnmount(() => {
   editorView = undefined;
 });
 </script>
+
+<style scoped>
+.codemirror-wrapper {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  font-size: 14px;
+}
+
+.codemirror-wrapper :deep(.cm-editor) {
+  height: 100%;
+}
+</style>

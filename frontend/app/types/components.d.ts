@@ -15,7 +15,7 @@ import type BaseDialog from "@/components/global/BaseDialog.vue";
 import type BaseDialogContent from "@/components/global/BaseDialogContent.vue";
 import type BaseDivider from "@/components/global/BaseDivider.vue";
 import type BaseExpansionPanels from "@/components/global/BaseExpansionPanels.vue";
-import type BaseJsonCodeEditor from "@/components/global/BaseJsonCodeEditor.client.vue";
+import type RecipeJsonEditor from "@/components/global/RecipeJsonEditor.client.vue";
 import type BaseKeyValueEditor from "@/components/global/BaseKeyValueEditor.vue";
 import type BaseMenu from "@/components/global/BaseMenu.vue";
 import type BaseOverflowButton from "@/components/global/BaseOverflowButton.vue";
@@ -58,7 +58,7 @@ declare module "vue" {
     BaseDialogContent: typeof BaseDialogContent;
     BaseDivider: typeof BaseDivider;
     BaseExpansionPanels: typeof BaseExpansionPanels;
-    BaseJsonCodeEditor: typeof BaseJsonCodeEditor;
+    RecipeJsonEditor: typeof RecipeJsonEditor;
     BaseKeyValueEditor: typeof BaseKeyValueEditor;
     BaseMenu: typeof BaseMenu;
     BaseOverflowButton: typeof BaseOverflowButton;

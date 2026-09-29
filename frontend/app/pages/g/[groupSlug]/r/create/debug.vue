@@ -1,15 +1,12 @@
 <template>
   <div>
-    <v-form
-      ref="domUrlForm"
-      @submit.prevent="debugUrl(recipeUrl)"
-    >
+    <v-form ref="domUrlForm" @submit.prevent="debugUrl(recipeUrl)">
       <div>
         <v-card-title class="headline">
-          {{ $t('recipe.recipe-debugger') }}
+          {{ $t("recipe.recipe-debugger") }}
         </v-card-title>
         <v-card-text>
-          {{ $t('recipe.recipe-debugger-description') }}
+          {{ $t("recipe.recipe-debugger-description") }}
           <v-text-field
             v-model="recipeUrl"
             :label="$t('new-recipe.recipe-url')"
@@ -26,11 +23,8 @@
           />
         </v-card-text>
         <v-card-text v-if="group?.aiProviderSettings?.aiEnabled">
-          {{ $t('recipe.recipe-debugger-use-openai-description') }}
-          <v-checkbox
-            v-model="state.useOpenAI"
-            :label="$t('recipe.use-openai')"
-          />
+          {{ $t("recipe.recipe-debugger-use-openai-description") }}
+          <v-checkbox v-model="state.useOpenAI" :label="$t('recipe.use-openai')" />
         </v-card-text>
         <v-card-actions class="justify-center">
           <div style="width: 250px">
@@ -45,18 +39,14 @@
               <template #icon>
                 {{ $globals.icons.robot }}
               </template>
-              {{ $t('recipe.debug') }}
+              {{ $t("recipe.debug") }}
             </BaseButton>
           </div>
         </v-card-actions>
       </div>
     </v-form>
     <section v-if="debugData">
-      <LazyBaseJsonCodeEditor
-        v-model="debugData"
-        height="700px"
-        read-only
-      />
+      <LazyRecipeJsonEditor v-model="debugData" height="700px" read-only hydrate-on-visible />
     </section>
   </div>
 </template>
