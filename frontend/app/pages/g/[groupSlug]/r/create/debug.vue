@@ -52,16 +52,7 @@
       </div>
     </v-form>
     <section v-if="debugData">
-      <v-checkbox
-        v-model="debugTreeView"
-        :label="$t('recipe.tree-view')"
-      />
-      <LazyBaseJsonTreeViewer
-        v-if="debugTreeView"
-        :model-value="debugData"
-      />
       <LazyBaseJsonCodeEditor
-        v-else
         v-model="debugData"
         height="700px"
         read-only
@@ -97,8 +88,6 @@ const recipeUrl = computed({
     return route.query.recipe_import_url as string | null;
   },
 });
-
-const debugTreeView = ref(false);
 
 const debugData = ref<Recipe | null>(null);
 

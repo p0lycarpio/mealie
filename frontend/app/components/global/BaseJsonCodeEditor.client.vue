@@ -1,12 +1,5 @@
 <template>
   <div>
-    <button
-      type="button"
-      :disabled="readOnly"
-      @click="formatJson"
-    >
-      Format JSON
-    </button>
     <div
       ref="editorElement"
       :style="{ height }"
@@ -20,10 +13,13 @@ import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { defaultHighlightStyle, syntaxHighlighting } from "@codemirror/language";
 import { linter } from "@codemirror/lint";
 import { Compartment, EditorState } from "@codemirror/state";
-import { EditorView, keymap, lineNumbers } from "@codemirror/view";
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { oneDark } from "@codemirror/theme-one-dark";
+import { EditorView, highlightActiveLine, highlightActiveLineGutter, keymap, lineNumbers } from "@codemirror/view";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
 
-const modelValue = defineModel<object>("modelValue", { default: () => ({}) });
+defineOptions({ name: "BaseJsonCodeEditor" });
+
+const modelValue = defineModel<unknown>("modelValue", { default: () => ({}) });
 const props = withDefaults(defineProps<{
   height?: string;
   readOnly?: boolean;
@@ -36,14 +32,17 @@ const props = withDefaults(defineProps<{
 
 const editorElement = ref<HTMLElement>();
 const readOnlyCompartment = new Compartment();
+const themeCompartment = new Compartment();
+const theme = useTheme();
+const isDark = computed(() => theme.global.current.value.dark);
 let editorView: EditorView | undefined;
 let internalText = serialize(modelValue.value);
 let lastValidObject = modelValue.value;
 let lastEmittedSerializedObject = serialize(modelValue.value);
 let applyingExternalUpdate = false;
 
-function serialize(value: object) {
-  return JSON.stringify(value, null, 2);
+function serialize(value: unknown): string {
+  return JSON.stringify(value, null, 2) ?? "{}";
 }
 
 function parseObject(text: string): object | undefined {
@@ -74,23 +73,19 @@ function replaceDocument(text: string) {
   });
 }
 
-function formatJson() {
-  if (props.readOnly) {
-    return;
-  }
-
-  const parsed = parseObject(internalText);
-  if (!parsed) {
-    return;
-  }
-
-  lastValidObject = parsed;
-  replaceDocument(serialize(parsed));
+function themeExtensions(dark: boolean) {
+  return [
+    dark ? oneDark : syntaxHighlighting(defaultHighlightStyle),
+    highlightActiveLine(),
+    highlightActiveLineGutter(),
+  ];
 }
 
-defineExpose({ formatJson });
-
 onMounted(() => {
+  if (!editorElement.value) {
+    return;
+  }
+
   editorView = new EditorView({
     parent: editorElement.value,
     state: EditorState.create({
@@ -100,12 +95,12 @@ onMounted(() => {
         history(),
         keymap.of([...defaultKeymap, ...historyKeymap, indentWithTab]),
         json(),
-        syntaxHighlighting(defaultHighlightStyle),
         linter(jsonParseLinter()),
         EditorView.theme({
           "&": { height: "100%" },
           ".cm-scroller": { overflow: "auto" },
         }),
+        themeCompartment.of(themeExtensions(isDark.value)),
         readOnlyCompartment.of([
           EditorState.readOnly.of(props.readOnly),
           EditorView.editable.of(!props.readOnly),
@@ -118,11 +113,7 @@ onMounted(() => {
 
           internalText = update.state.doc.toString();
           const parsed = parseObject(internalText);
-          if (!parsed) {
-            return;
-          }
-
-          if (props.readOnly && !applyingExternalUpdate) {
+          if (!parsed || (props.readOnly && !applyingExternalUpdate)) {
             return;
           }
 
@@ -143,6 +134,12 @@ watch(() => props.readOnly, (readOnly) => {
       EditorState.readOnly.of(readOnly),
       EditorView.editable.of(!readOnly),
     ]),
+  });
+});
+
+watch(isDark, (dark) => {
+  editorView?.dispatch({
+    effects: themeCompartment.reconfigure(themeExtensions(dark)),
   });
 });
 
