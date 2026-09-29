@@ -14,20 +14,18 @@
         <p v-if="videosEnabled">
           {{ $t("recipe.import-with-ai-video-description") }}
         </p>
-        <br />
+        <br>
         <p>
           {{ $t("recipe.import-with-ai-without-ai-question") }}
           <router-link :to="urlImporterTarget" class="text-primary">{{
             $t("recipe.import-with-ai-use-url-import")
-          }}</router-link
-          >.
+          }}</router-link>.
         </p>
         <p>
           {{ $t("recipe.scrape-recipe-have-raw-html-or-json-data") }}
           <router-link :to="htmlOrJsonImporterTarget" class="text-primary">{{
             $t("recipe.scrape-recipe-you-can-import-from-raw-data-directly")
-          }}</router-link
-          >.
+          }}</router-link>.
         </p>
 
         <v-text-field
@@ -154,7 +152,7 @@ import { validators } from "~/composables/use-validators";
 import type { VForm } from "~/types/auto-forms";
 
 definePageMeta({
-  key: (route) => route.path,
+  key: route => route.path,
 });
 
 const state = reactive({
@@ -207,15 +205,19 @@ function handleIsEditJson() {
     if (newRecipeData.value) {
       try {
         newRecipeData.value = JSON.parse(newRecipeData.value as string);
-      } catch {
+      }
+      catch {
         newRecipeData.value = { data: newRecipeData.value };
       }
-    } else {
+    }
+    else {
       newRecipeData.value = {};
     }
-  } else if (newRecipeData.value && Object.keys(newRecipeData.value).length > 0) {
+  }
+  else if (newRecipeData.value && Object.keys(newRecipeData.value).length > 0) {
     newRecipeData.value = JSON.stringify(newRecipeData.value);
-  } else {
+  }
+  else {
     newRecipeData.value = null;
   }
 }
@@ -243,7 +245,7 @@ async function createRecipe() {
       translateLanguage: translateRecipe.value ? i18n.locale.value : null,
       createNewOrganizers: createNewOrganizers.value,
     },
-    (message: string) => (createStatus.value = message)
+    (message: string) => (createStatus.value = message),
   );
 
   createStatus.value = null;

@@ -17,8 +17,7 @@
         </p>
         <p v-if="aiEnabled">
           {{ $t("recipe.import-from-html-or-json-have-ai-read-it") }}
-          <router-link :to="aiImporterTarget" class="text-primary">{{ $t("recipe.import-with-ai") }}</router-link
-          >.
+          <router-link :to="aiImporterTarget" class="text-primary">{{ $t("recipe.import-with-ai") }}</router-link>.
         </p>
         <v-switch
           v-model="state.isEditJSON"
@@ -175,15 +174,19 @@ function handleIsEditJson() {
     if (newRecipeData.value) {
       try {
         newRecipeData.value = JSON.parse(newRecipeData.value as string);
-      } catch {
+      }
+      catch {
         newRecipeData.value = { data: newRecipeData.value };
       }
-    } else {
+    }
+    else {
       newRecipeData.value = {};
     }
-  } else if (newRecipeData.value && Object.keys(newRecipeData.value).length > 0) {
+  }
+  else if (newRecipeData.value && Object.keys(newRecipeData.value).length > 0) {
     newRecipeData.value = JSON.stringify(newRecipeData.value);
-  } else {
+  }
+  else {
     newRecipeData.value = null;
   }
 }
@@ -194,7 +197,7 @@ async function createFromHtmlOrJson(
   htmlOrJsonData: string | object | null,
   importKeywordsAsTags: boolean,
   importCategories: boolean,
-  url: string | null = null
+  url: string | null = null,
 ) {
   if (!htmlOrJsonData) {
     return;
@@ -208,7 +211,8 @@ async function createFromHtmlOrJson(
   let dataString;
   if (typeof htmlOrJsonData === "string") {
     dataString = htmlOrJsonData;
-  } else {
+  }
+  else {
     dataString = JSON.stringify(htmlOrJsonData);
   }
 
@@ -219,7 +223,7 @@ async function createFromHtmlOrJson(
     importKeywordsAsTags,
     importCategories,
     url,
-    (message: string) => (createStatus.value = message)
+    (message: string) => (createStatus.value = message),
   );
   createStatus.value = null;
   handleResponse(response, importKeywordsAsTags);

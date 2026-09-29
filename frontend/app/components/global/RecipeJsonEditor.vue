@@ -25,7 +25,7 @@ const props = withDefaults(
   {
     height: "1500px",
     readOnly: false,
-  }
+  },
 );
 
 const editorElement = ref<HTMLElement>();
@@ -49,7 +49,8 @@ function parseObject(text: string): object | undefined {
     if (typeof value === "object" && value !== null) {
       return value;
     }
-  } catch {
+  }
+  catch {
     // Invalid text stays in the editor until the user corrects it.
   }
   return undefined;
@@ -124,7 +125,7 @@ watch(
     editorView?.dispatch({
       effects: readOnlyCompartment.reconfigure([EditorState.readOnly.of(readOnly), EditorView.editable.of(!readOnly)]),
     });
-  }
+  },
 );
 
 watch(isDark, (dark) => {

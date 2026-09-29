@@ -259,7 +259,7 @@ const { isOwnGroup } = useLoggedInState();
 const { household } = useHouseholdSelf();
 
 const disableComments = computed(
-  () => household.value?.preferences?.recipeDisableComments || recipe.value?.settings?.disableComments || false
+  () => household.value?.preferences?.recipeDisableComments || recipe.value?.settings?.disableComments || false,
 );
 
 const groupSlug = computed(() => (route.params.groupSlug as string) || auth.user?.value?.groupSlug || "");
@@ -300,16 +300,16 @@ const displayedRecipe = computed<NoUndefinedField<Recipe>>(() => {
 
   return {
     ...recipe.value,
-    recipeIngredient: recipe.value.recipeIngredient.map((ingredient) =>
-      convertIngredient(ingredient, unitSystem.value!, scale.value)
+    recipeIngredient: recipe.value.recipeIngredient.map(ingredient =>
+      convertIngredient(ingredient, unitSystem.value!, scale.value),
     ),
   };
 });
 
 const notLinkedIngredients = computed(() => {
   return displayedRecipe.value.recipeIngredient.filter((ingredient) => {
-    return !recipe.value.recipeInstructions.some((step) =>
-      step.ingredientReferences?.map((ref) => ref.referenceId).includes(ingredient.referenceId)
+    return !recipe.value.recipeInstructions.some(step =>
+      step.ingredientReferences?.map(ref => ref.referenceId).includes(ingredient.referenceId),
     );
   });
 });
@@ -329,7 +329,7 @@ onMounted(async () => {
     ([entry]) => {
       toolbarVisible.value = entry.isIntersecting;
     },
-    { threshold: 0 }
+    { threshold: 0 },
   );
   toolbarObserver.observe(el);
 });
@@ -367,7 +367,8 @@ function closeEditor() {
   if (hasUnsavedChanges()) {
     pendingRoute.value = null;
     discardDialog.value = true;
-  } else {
+  }
+  else {
     setMode(PageMode.VIEW);
   }
 }
@@ -380,7 +381,8 @@ function confirmDiscard() {
     const destination = pendingRoute.value;
     pendingRoute.value = null;
     router.push(destination);
-  } else {
+  }
+  else {
     setMode(PageMode.VIEW);
   }
 }
@@ -404,7 +406,7 @@ onUnmounted(() => {
 });
 const hasLinkedIngredients = computed(() => {
   return recipe.value.recipeInstructions.some(
-    (step) => step.ingredientReferences && step.ingredientReferences.length > 0
+    step => step.ingredientReferences && step.ingredientReferences.length > 0,
   );
 });
 /** =============================================================
@@ -500,7 +502,8 @@ const landscape = computed(() => {
 
   if (preferLandscape) {
     return true;
-  } else if (smallScreen) {
+  }
+  else if (smallScreen) {
     return true;
   }
 
@@ -523,7 +526,8 @@ function addStep(steps: Array<string> | null = null) {
     });
 
     recipe.value.recipeInstructions.push(...cleanedSteps);
-  } else {
+  }
+  else {
     recipe.value.recipeInstructions.push({
       id: uuid4(),
       text: "",
