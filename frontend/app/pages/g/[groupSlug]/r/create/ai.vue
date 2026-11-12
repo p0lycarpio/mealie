@@ -44,14 +44,19 @@
         />
 
         <v-switch
-          v-model="state.isEditJSON"
+          v-model="isEditJSON"
           :label="$t('recipe.json-editor')"
           color="primary"
           class="mt-2"
           :disabled="state.loading"
-          @change="handleIsEditJson"
         />
-        <LazyRecipeJsonEditor v-if="state.isEditJSON" v-model="newRecipeData" height="250px" hydrate-on-visible />
+        <LazyRecipeJsonEditor
+          v-if="state.isEditJSON"
+          v-model="newRecipeData"
+          v-model:valid="jsonValid"
+          height="250px"
+          hydrate-on-visible
+        />
         <v-textarea
           v-else
           v-model="newRecipeData"
@@ -115,7 +120,7 @@
       <v-card-actions v-if="aiEnabled" class="justify-center">
         <div style="width: 100%" class="text-center">
           <div style="width: 250px; margin: 0 auto">
-            <BaseButton :disabled="!hasSource" rounded block type="submit" :loading="state.loading" />
+            <BaseButton :disabled="!hasSource || !jsonValid" rounded block type="submit" :loading="state.loading" />
           </div>
           <v-card-text class="py-2">
             <!-- render &nbsp; to maintain layout -->
@@ -149,6 +154,7 @@ import { useGroupSelf } from "~/composables/use-groups";
 import { useTagStore } from "~/composables/store/use-tag-store";
 import { useNewRecipeOptions } from "~/composables/use-new-recipe-options";
 import { validators } from "~/composables/use-validators";
+import { useJsonEditorGuard } from "~/composables/use-navigation-warning";
 import type { VForm } from "~/types/auto-forms";
 
 definePageMeta({
@@ -178,9 +184,21 @@ const videosEnabled = computed(() => !!group.value?.aiProviderSettings?.audioPro
 
 const domUrlForm = ref<VForm | null>(null);
 const recipeUrl = ref<string | null>(null);
-const newRecipeData = ref<string | object | null>(null);
+const newRecipeData = ref<string | object | number | boolean | null>(null);
 const uploadedImages = ref<(Blob | File)[]>([]);
 const createStatus = ref<string | null>(null);
+const { valid: jsonValid, confirmDiscard } = useJsonEditorGuard();
+const isEditJSON = computed({
+  get: () => state.isEditJSON,
+  set: (value: boolean) => {
+    if (!value && !confirmDiscard()) {
+      return;
+    }
+    state.isEditJSON = value;
+    jsonValid.value = true;
+    handleIsEditJson();
+  },
+});
 
 const { stayInEditMode, parseRecipe, translateRecipe, createNewOrganizers, navigateToRecipe } = useNewRecipeOptions({
   enableImportKeywords: false,
@@ -191,6 +209,9 @@ const { stayInEditMode, parseRecipe, translateRecipe, createNewOrganizers, navig
 
 const contentAsString = computed(() => {
   const data = newRecipeData.value;
+  if (state.isEditJSON) {
+    return JSON.stringify(data);
+  }
   if (!data) {
     return null;
   }
@@ -214,17 +235,16 @@ function handleIsEditJson() {
       newRecipeData.value = {};
     }
   }
-  else if (newRecipeData.value && Object.keys(newRecipeData.value).length > 0) {
-    newRecipeData.value = JSON.stringify(newRecipeData.value);
-  }
-  else {
+  else if (newRecipeData.value !== null && typeof newRecipeData.value === "object" && !Object.keys(newRecipeData.value).length) {
     newRecipeData.value = null;
   }
+  else {
+    newRecipeData.value = JSON.stringify(newRecipeData.value);
+  }
 }
-handleIsEditJson();
 
 async function createRecipe() {
-  if (!hasSource.value) {
+  if (!hasSource.value || !jsonValid.value) {
     return;
   }
 

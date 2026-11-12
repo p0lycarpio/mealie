@@ -46,7 +46,11 @@
       </div>
     </v-form>
     <section v-if="debugData">
-      <LazyRecipeJsonEditor v-model="debugData" height="700px" read-only hydrate-on-visible />
+      <v-checkbox v-model="debugTreeView" :label="$t('recipe.tree-view')" />
+      <div v-if="debugTreeView" class="json-tree-viewer">
+        <BaseJsonTreeNode :value="debugData" />
+      </div>
+      <LazyRecipeJsonEditor v-else v-model="debugData" height="700px" read-only hydrate-on-visible />
     </section>
   </div>
 </template>
@@ -56,6 +60,7 @@ import { useUserApi } from "~/composables/api";
 import { useGroupSelf } from "~/composables/use-groups";
 import { validators } from "~/composables/use-validators";
 import type { Recipe } from "~/lib/api/types/recipe";
+import BaseJsonTreeNode from "~/components/global/BaseJsonTreeNode.vue";
 
 const state = reactive({
   loading: false,
@@ -80,6 +85,7 @@ const recipeUrl = computed({
 });
 
 const debugData = ref<Recipe | null>(null);
+const debugTreeView = ref(false);
 
 async function debugUrl(url: string | null) {
   if (url === null) {
@@ -94,3 +100,11 @@ async function debugUrl(url: string | null) {
   debugData.value = data;
 }
 </script>
+
+<style scoped>
+.json-tree-viewer {
+  max-height: 700px;
+  overflow: auto;
+  font-family: monospace;
+}
+</style>

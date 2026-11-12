@@ -31,8 +31,16 @@
           @save="saveRecipe"
           @delete="deleteRecipe"
           @close="closeEditor"
+          @json="toggleJsonEditor"
         />
-        <LazyRecipeJsonEditor v-if="isEditJSON" v-model="recipe" class="mt-10" hydrate-on-visible />
+        <LazyRecipeJsonEditor
+          v-if="isEditJSON"
+          v-model="recipe"
+          v-model:valid="jsonValid"
+          require-object
+          class="mt-10"
+          hydrate-on-visible
+        />
         <v-card-text v-else>
           <!--
             This is where most of the main content is rendered. Some components include state for both Edit and View modes
@@ -276,10 +284,21 @@ const {
   isEditMode,
   isParsing,
   toggleCookMode,
+  toggleEditMode,
   toggleIsParsing,
 } = usePageState(recipe.value.slug);
 const { deactivateNavigationWarning } = useNavigationWarning();
 const scale = ref(1);
+const jsonValid = ref(true);
+const { t } = useI18n();
+
+function toggleJsonEditor() {
+  if (isEditJSON.value && !jsonValid.value && !window.confirm(t("recipe.discard-invalid-json"))) {
+    return;
+  }
+  jsonValid.value = true;
+  toggleEditMode();
+}
 
 const { unitSystem } = useUnitSystem();
 const { convertIngredient } = useUnitConversion();
@@ -351,6 +370,9 @@ invoke(async () => {
 });
 
 function hasUnsavedChanges(): boolean {
+  if (isEditJSON.value && !jsonValid.value) {
+    return true;
+  }
   if (originalRecipe.value === null) {
     return false;
   }
@@ -460,6 +482,9 @@ watch(isParsing, () => {
  */
 
 async function saveRecipe() {
+  if (isEditJSON.value && !jsonValid.value) {
+    return;
+  }
   const { data, error } = await api.recipes.updateOne(route.params.slug as string, recipe.value);
   if (!error) {
     if (data?.slug && data.slug !== route.params.slug) {

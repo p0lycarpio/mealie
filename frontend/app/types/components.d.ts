@@ -15,7 +15,7 @@ import type BaseDialog from "@/components/global/BaseDialog.vue";
 import type BaseDialogContent from "@/components/global/BaseDialogContent.vue";
 import type BaseDivider from "@/components/global/BaseDivider.vue";
 import type BaseExpansionPanels from "@/components/global/BaseExpansionPanels.vue";
-import type RecipeJsonEditor from "@/components/global/RecipeJsonEditor.client.vue";
+import type BaseJsonTreeNode from "@/components/global/BaseJsonTreeNode.vue";
 import type BaseKeyValueEditor from "@/components/global/BaseKeyValueEditor.vue";
 import type BaseMenu from "@/components/global/BaseMenu.vue";
 import type BaseOverflowButton from "@/components/global/BaseOverflowButton.vue";
@@ -32,6 +32,7 @@ import type InputColor from "@/components/global/InputColor.vue";
 import type InputLabelType from "@/components/global/InputLabelType.vue";
 import type LanguageDialog from "@/components/global/LanguageDialog.vue";
 import type MarkdownEditor from "@/components/global/MarkdownEditor.vue";
+import type RecipeJsonEditor from "@/components/global/RecipeJsonEditor.vue";
 import type ReportTable from "@/components/global/ReportTable.vue";
 import type SafeMarkdown from "@/components/global/SafeMarkdown.vue";
 import type StatsCards from "@/components/global/StatsCards.vue";
@@ -58,7 +59,7 @@ declare module "vue" {
     BaseDialogContent: typeof BaseDialogContent;
     BaseDivider: typeof BaseDivider;
     BaseExpansionPanels: typeof BaseExpansionPanels;
-    RecipeJsonEditor: typeof RecipeJsonEditor;
+    BaseJsonTreeNode: typeof BaseJsonTreeNode;
     BaseKeyValueEditor: typeof BaseKeyValueEditor;
     BaseMenu: typeof BaseMenu;
     BaseOverflowButton: typeof BaseOverflowButton;
@@ -75,6 +76,7 @@ declare module "vue" {
     InputLabelType: typeof InputLabelType;
     LanguageDialog: typeof LanguageDialog;
     MarkdownEditor: typeof MarkdownEditor;
+    RecipeJsonEditor: typeof RecipeJsonEditor;
     ReportTable: typeof ReportTable;
     SafeMarkdown: typeof SafeMarkdown;
     StatsCards: typeof StatsCards;
@@ -85,4 +87,4 @@ declare module "vue" {
   }
 }
 
-export { };
+export {};
