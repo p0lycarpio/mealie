@@ -193,5 +193,6 @@ onBeforeUnmount(() => {
 
 .codemirror-wrapper :deep(.cm-editor) {
   height: 100%;
+  background-color: var(--v-theme-surface);
 }
 </style>
