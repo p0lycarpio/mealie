@@ -106,7 +106,7 @@
 
           <div class="force-url-white">
             <p>
-              {{ $t("new-recipe.html-or-json-error-details") }}
+              {{ errorDetails || $t("new-recipe.html-or-json-error-details") }}
             </p>
           </div>
           <div class="d-flex row justify-space-around my-3 force-url-white">
@@ -148,9 +148,16 @@ import type { VForm } from "~/types/auto-forms";
 
 const state = reactive({
   error: false,
+  errorMessage: "",
   loading: false,
   isEditJSON: false,
 });
+// Messages the paste page cannot explain better than its generic advice: the scraper's bare
+// error codes, and the stream client's own fallback when no error message arrived.
+const genericErrors = ["BAD_RECIPE_DATA", "NO_RECIPE_DATA", "CONNECTION_ERROR", "Recipe creation failed"];
+const errorDetails = computed(() =>
+  state.errorMessage && !genericErrors.includes(state.errorMessage) ? state.errorMessage : null,
+);
 const auth = useMealieAuth();
 const route = useRoute();
 const groupSlug = computed(() => (route.params.groupSlug as string) || auth.user.value?.groupSlug || "");
@@ -240,8 +247,9 @@ async function createFromHtmlOrJson(
   }
 
   state.error = false;
+  state.errorMessage = "";
   state.loading = true;
-  const { response } = await api.recipes.createOneByHtmlOrJson(
+  const { response, error } = await api.recipes.createOneByHtmlOrJson(
     dataString,
     importKeywordsAsTags,
     importCategories,
@@ -249,6 +257,7 @@ async function createFromHtmlOrJson(
     (message: string) => (createStatus.value = message),
   );
   createStatus.value = null;
+  state.errorMessage = error?.message || "";
   handleResponse(response, importKeywordsAsTags);
 }
 </script>

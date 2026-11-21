@@ -23,8 +23,8 @@
           />
         </v-card-text>
         <v-card-text v-if="group?.aiProviderSettings?.aiEnabled">
-          {{ $t("recipe.recipe-debugger-use-openai-description") }}
-          <v-checkbox v-model="state.useOpenAI" :label="$t('recipe.use-openai')" />
+          {{ $t("recipe.recipe-debugger-use-ai-description") }}
+          <v-checkbox v-model="state.useOpenAI" :label="$t('recipe.use-ai')" />
         </v-card-text>
         <v-card-actions class="justify-center">
           <div style="width: 250px">
@@ -55,7 +55,7 @@
 import { useUserApi } from "~/composables/api";
 import { useGroupSelf } from "~/composables/use-groups";
 import { validators } from "~/composables/use-validators";
-import type { Recipe } from "~/lib/api/types/recipe";
+import type { RecipeDraft } from "~/lib/api/types/recipe";
 
 const state = reactive({
   loading: false,
@@ -79,8 +79,7 @@ const recipeUrl = computed({
   },
 });
 
-const debugData = ref<Recipe | null>(null);
-const debugTreeView = ref(false);
+const debugData = ref<RecipeDraft | null>(null);
 
 async function debugUrl(url: string | null) {
   if (url === null) {
@@ -95,11 +94,3 @@ async function debugUrl(url: string | null) {
   debugData.value = data;
 }
 </script>
-
-<style scoped>
-.json-tree-viewer {
-  max-height: 700px;
-  overflow: auto;
-  font-family: monospace;
-}
-</style>
